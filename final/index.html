@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffe3eb"><title>Will You Marry Me, Papa? ❤️</title>
+<style>
+:root{--rose:#c22e58;--deep:#6e1836;--cream:#fff8f1;--pink:#ffe3eb;--gold:#d8a64c}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;background:radial-gradient(circle at top,#fff7f8,#f9dce5 48%,#f4c8d6);font-family:Georgia,serif;color:#4a2130}.card{width:min(720px,100%);background:rgba(255,250,246,.97);border:1px solid #e8bdc9;border-radius:28px;padding:clamp(22px,5vw,48px);box-shadow:0 18px 55px #7c24421c;text-align:center}.eyebrow{letter-spacing:.2em;text-transform:uppercase;font:700 11px Arial;color:#a84a67}.heart{font-size:38px;margin:6px}.title{font-size:clamp(30px,7vw,48px);color:var(--deep);margin:8px 0 12px}.subtitle{line-height:1.6;color:#7e5260}.progress{height:7px;background:#f3dce3;border-radius:20px;overflow:hidden;margin:24px 0 8px}.bar{height:100%;width:0;background:linear-gradient(90deg,#d64b72,#e3ad57);transition:width .3s}.step{font:12px Arial;color:#9c6979}.question{font-size:clamp(23px,5vw,32px);line-height:1.35;margin:28px 0 24px}.answers{display:grid;gap:12px;max-width:480px;margin:0 auto}.answer,.primary,.secondary{border:0;border-radius:15px;padding:15px 18px;font-size:16px;cursor:pointer}.answer{background:white;border:1px solid #eccbd5;color:#61253c;text-align:left}.answer:hover,.primary:hover,.secondary:hover{filter:brightness(.98);transform:translateY(-1px)}.primary{background:linear-gradient(135deg,#c52f5a,#8e1e43);color:white;font-weight:bold}.secondary{background:#f8e6eb;color:#7c2944}.note{font:13px Arial;color:#9b6b7a;margin-top:18px}.hidden{display:none!important}.final-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;min-height:58px}.final-buttons button{min-width:130px}.yes{background:linear-gradient(135deg,#c52f5a,#8e1e43);color:#fff;font-weight:bold}.no{background:#f8e6eb;color:#7c2944;border:1px solid #eccbd5}.tiny{font-size:12px;color:#9a7180;margin-top:14px}.footer{margin-top:26px;font:11px Arial;letter-spacing:.12em;color:#bb8a99}.celebrate{font-size:30px;line-height:1.8}
+
+/* Big YES celebration */
+.celebration-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:18px;background:rgba(74,12,39,.78);backdrop-filter:blur(7px);animation:overlayIn .35s ease-out}
+.celebration-overlay.hidden{display:none!important}
+.celebration-modal{position:relative;overflow:hidden;width:min(680px,100%);max-height:92vh;overflow-y:auto;text-align:center;padding:clamp(26px,6vw,56px) clamp(18px,5vw,42px);border:3px solid #ffd8e4;border-radius:32px;background:radial-gradient(circle at top,#fff,#fff0f5 52%,#ffe0eb);box-shadow:0 0 0 8px #ffffff22,0 25px 100px #17000b80;animation:popIn .65s cubic-bezier(.16,1.3,.4,1)}
+.celebration-modal:before,.celebration-modal:after{content:"💖 ✨ 🌹 ✨ 💖";display:block;font-size:clamp(20px,4vw,32px);letter-spacing:.08em;animation:floatHearts 2.2s ease-in-out infinite}
+.celebration-modal:after{margin-top:12px;animation-delay:.4s}
+.celebration-kicker{margin:18px 0 8px;font:800 12px Arial,sans-serif;letter-spacing:.24em;color:#b72c58}
+.celebration-title{font-size:clamp(38px,9vw,72px);line-height:1.02;margin:10px 0 18px;color:#94183f;text-shadow:0 3px 0 #ffd1df}
+.celebration-message{font-size:clamp(17px,3.7vw,23px);line-height:1.65;color:#703049;max-width:510px;margin:0 auto 22px}
+.celebration-ring{font-size:clamp(66px,14vw,110px);line-height:1.2;filter:drop-shadow(0 8px 12px #c22e5840);animation:ringBounce 1.2s ease-in-out infinite}
+.celebration-close{border:0;border-radius:999px;padding:14px 24px;background:linear-gradient(135deg,#c52f5a,#8e1e43);color:white;font-weight:bold;font-size:16px;cursor:pointer;box-shadow:0 8px 22px #8e1e4333}
+.confetti-piece{position:fixed;top:-24px;z-index:10000;pointer-events:none;font-size:clamp(18px,4vw,30px);animation:confettiFall var(--fall-time,3.5s) linear forwards;left:var(--left);filter:drop-shadow(0 3px 3px #0001)}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{0%{opacity:0;transform:translateY(40px) scale(.55) rotate(-3deg)}70%{transform:translateY(-6px) scale(1.03) rotate(1deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
+@keyframes floatHearts{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes ringBounce{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.12) rotate(4deg)}}
+@keyframes confettiFall{0%{transform:translate3d(0,-10vh,0) rotate(0deg);opacity:1}100%{transform:translate3d(var(--drift,40px),110vh,0) rotate(780deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.celebration-overlay,.celebration-modal,.celebration-ring,.celebration-modal:before,.celebration-modal:after,.confetti-piece{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* Explosive party poppers: confetti bursts from the center and balloons rise */
+.burst-piece{position:fixed;left:50%;top:50%;z-index:10002;pointer-events:none;will-change:transform,opacity;font-size:var(--particle-size,24px);animation:partyBurst var(--burst-time,1.8s) cubic-bezier(.12,.65,.25,1) forwards;filter:drop-shadow(0 2px 2px #0002)}
+@keyframes partyBurst{0%{transform:translate(-50%,-50%) scale(.2) rotate(0deg);opacity:1}75%{opacity:1}100%{transform:translate(calc(-50% + var(--burst-x)),calc(-50% + var(--burst-y))) scale(1) rotate(var(--spin,500deg));opacity:0}}
+.party-balloon{position:fixed;bottom:-100px;z-index:10001;pointer-events:none;font-size:var(--balloon-size,54px);animation:balloonRise var(--balloon-time,5s) ease-out forwards;filter:drop-shadow(0 5px 5px #0002)}
+@keyframes balloonRise{0%{transform:translateY(0) rotate(-8deg) scale(.6);opacity:0}12%{opacity:1}50%{transform:translateY(-55vh) rotate(8deg) scale(1)}100%{transform:translate(calc(var(--balloon-drift,40px)), -120vh) rotate(-12deg) scale(1.08);opacity:0}}
+
+.memory-picture{position:relative;display:flex;align-items:center;justify-content:center;gap:clamp(4px,2vw,18px);min-height:190px;margin:22px auto;padding:26px 12px;border:2px solid #f2c4d2;border-radius:28px;overflow:hidden;background:radial-gradient(circle at 18% 18%,#fff 0 4%,transparent 5%),radial-gradient(circle at 82% 25%,#fff 0 3%,transparent 4%),linear-gradient(135deg,#fff2f7,#ffe0eb 48%,#fff4df);box-shadow:inset 0 0 35px #eaa9bd30,0 12px 28px #9e36551a;font-size:clamp(42px,10vw,74px);letter-spacing:-.08em}
+.memory-picture:before,.memory-picture:after{position:absolute;content:"✨ 💕 ✨";font-size:18px;letter-spacing:.35em;opacity:.85;animation:floatHearts 2.3s ease-in-out infinite}
+.memory-picture:before{top:14px;left:14px}.memory-picture:after{bottom:12px;right:14px;animation-delay:.5s}
+.memory-picture span{position:relative;z-index:1;display:inline-block;filter:drop-shadow(0 5px 6px #9e365522);animation:sceneBob 2s ease-in-out infinite}
+.memory-picture span:nth-child(2){animation-delay:.25s;transform:translateY(-7px)}
+.memory-picture span:nth-child(3){animation-delay:.5s}
+@keyframes sceneBob{0%,100%{translate:0 0;rotate:-3deg}50%{translate:0 -8px;rotate:3deg}}
+
+.love-note{margin:18px auto 10px;padding:16px 18px;width:fit-content;max-width:100%;border:1px solid #f1c2d0;border-radius:20px;background:linear-gradient(135deg,#fff1f5,#fffaf8);color:#a21d49;font-size:clamp(20px,4.8vw,29px);font-weight:bold;line-height:1.5;box-shadow:0 8px 24px #c22e5815;animation:loveNotePop .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes loveNotePop{from{opacity:0;transform:scale(.75) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+#continueAnswer{display:block;width:min(100%,480px);margin:20px auto 0;min-height:54px;font-weight:700;transition:opacity .2s,filter .2s}
+#continueAnswer:disabled{opacity:.72;cursor:not-allowed;filter:saturate(.55)}
+#continueAnswer:not(:disabled){opacity:1;cursor:pointer;filter:none}
+
+</style></head><body><main class="card"><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose as many answers as feel right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
+  <div class="memory-picture" id="memoryPicture" aria-label="Cute romantic emojis"></div>
+  <p class="love-note" id="loveNote" aria-live="polite"></p>
+  <button class="primary" id="nextQuestion">Next question 💌</button>
+</section><section id="proposal" class="hidden"><div class="heart">💍❤️</div><div class="eyebrow">One last question</div><h2 class="title">Will you marry me, papa? ❤️</h2><p class="subtitle">Jaya, you are my favourite person, my safe place, and the one I want beside me through all of life's chapters. Will you make me the happiest person and choose this forever with me? 🌹</p><div class="final-buttons"><button class="primary yes" id="yes">YES! ❤️</button><button class="no" id="no">No 🙈</button></div><p class="tiny" id="hint">Hint: try “No” 😉</p></section><section id="done" class="hidden"><div class="celebrate">💖 🌹 💍 🌹 💖</div><h2 class="title">You made my heart so happy, papa! ❤️</h2><p class="subtitle">Here's to choosing each other, making memories, solving problems together, and loving each other more every day. Forever starts with us. — Jeevirajaa</p><p class="celebrate">🥹💕🎉</p><button class="secondary" onclick="location.reload()">Replay our little journey ↻</button></section><div class="footer">MADE WITH LOVE · JEEVIRAJAA ♡ JAYAPRIYA</div></main>
+
+<div id="celebrationOverlay" class="celebration-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="celebrationTitle">
+  <div class="celebration-modal">
+    <div class="celebration-ring">💍</div>
+    <div class="celebration-kicker">THE BEST YES EVER</div>
+    <h2 id="celebrationTitle" class="celebration-title">SHE SAID YES! ❤️</h2>
+    <p class="celebration-message">Jayapriya, you just made Jeevirajaa the happiest person in the world! 🥹💕<br><strong>Our forever starts here.</strong><br>One love. One team. A lifetime of memories. 🌹</p>
+    <button id="closeCelebration" class="celebration-close">A million hugs for you! 🤗❤️</button>
+  </div>
+</div>
+<script>
+const questions=[
+{q:"When we have a misunderstanding, what matters most to you?",a:["Listening calmly and understanding each other 👂💗","Saying sorry when we are wrong 🥹","Remembering that we are on the same team 🤝❤️"],scene:"💬 💗 🫶",caption:"Even when words get tangled, our hearts can find each other."},
+{q:"If we have a big fight, what would you want us to do?",a:["Take a little time to calm down, then talk 🌷","Talk honestly and solve it together 🤝","Hug, forgive, and never stop respecting each other 🫂"],scene:"☁️ 🫂 🌈",caption:"After every storm, let's find our rainbow together."},
+{q:"When life gets busy, how should we maintain our relationship?",a:["Make small moments for each other every day 💌","Plan special quality time together 🕯️","Keep checking in and cheering each other on 📱💕"],scene:"📱 💌 ☕",caption:"A little love in the middle of a busy day means everything."},
+{q:"If one of us feels insecure or jealous, what should happen?",a:["Speak honestly and reassure each other 💞","Listen without judging and rebuild trust 🤍","Be patient, transparent, and kind 🌸"],scene:"🫶 🔐 💖",caption:"Trust grows when we make each other feel safe."},
+{q:"When we get married, how should we make important life decisions?",a:["Discuss them together and decide as a team 🤝","Listen to each other's views before deciding 👂","Balance our dreams, values, and responsibilities 🏡"],scene:"💍 🏡 🌳",caption:"Two voices, one team, and a future we build together."},
+{q:"If I am having a difficult day and cannot express my feelings properly, what would you do?",a:["Stay beside you and listen patiently 🫂","Give you comfort and space until you're ready 🌷","Remind you that you don't have to face it alone ❤️"],scene:"🌧️ 🧸 ☀️",caption:"On cloudy days, let's be each other's sunshine."},
+{q:"If our careers, family responsibilities, and relationship need attention at the same time, how should we handle them?",a:["Plan together and share responsibilities 📅","Support each other and adjust as a team 🤝","Make time for family, dreams, and us 💗"],scene:"💼 🏡 💑",caption:"We can make room for our dreams without forgetting our love."},
+{q:"If our relationship goes through a difficult phase after marriage, what would you hope for?",a:["We keep choosing each other and work through it ❤️","We seek help and guidance when we need it 🌱","We stay honest, patient, and committed 💍"],scene:"🌧️ 🌱 🌈",caption:"Love isn't a perfect road; it's choosing to walk it together."},
+{q:"What is the most important thing you want us to promise each other before marriage?",a:["To be honest and faithful to each other 🤍","To respect, support, and protect our bond 🫶","To keep communicating and never stop trying 💌"],scene:"🤞 💖 💍",caption:"A promise made with love, kept with actions."},
+{q:"After everything we have shared, the happy moments, the fights, the lessons, and the dreams… will you choose me as your life partner and build our future together?",a:["Yes, I'll keep choosing us ❤️","Yes, let's build our future as a team 🏡","Yes, today and through every chapter 💍🥹"],scene:"💑 🌹 💍",caption:"Every chapter brought us here. Our forever story is waiting."}
+];
+let index=0,noCount=0;const $=id=>document.getElementById(id);$("start").onclick=()=>{$("start").classList.add("hidden");$("quiz").classList.remove("hidden");render()};
+let selectedAnswers=[];
+function render(){const item=questions[index];selectedAnswers=[];$("step").textContent="QUESTION "+(index+1)+" OF "+questions.length;$("bar").style.width=((index)/questions.length*100)+"%";$("question").textContent=item.q;$("answers").innerHTML="";$("continueAnswer").disabled=true;item.a.forEach((answer,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=answer;b.setAttribute("aria-pressed","false");b.onclick=()=>{const selected=selectedAnswers.includes(i);if(selected){selectedAnswers=selectedAnswers.filter(n=>n!==i)}else{selectedAnswers.push(i)}b.style.borderColor=!selected?"#c22e58":"#eccbd5";b.style.background=!selected?"#fff0f5":"white";b.setAttribute("aria-pressed",!selected?"true":"false");$("continueAnswer").disabled=selectedAnswers.length===0};$("answers").appendChild(b)})}
+$("continueAnswer").onclick=()=>{if(selectedAnswers.length>0)indexAnswered(selectedAnswers.slice())};
+const loveNotes=[
+  {text:"I love you d naayea",heart:"💖"},
+  {text:"I love you d kuttima",heart:"💕"},
+  {text:"I love you d killer",heart:"💘"},
+  {text:"I love you d mayilea",heart:"💝"},
+  {text:"I love you d chellam",heart:"💗"},
+  {text:"I love you d mental",heart:"❤️‍🔥"},
+  {text:"I love you d vellachi",heart:"💞"},
+  {text:"I love you d pattu",heart:"💓"},
+  {text:"I love you d papa",heart:"🩷"},
+  {text:"I love you d papa",heart:"💟"}
+];
+function indexAnswered(choice){const item=questions[index];const note=loveNotes[index];$("quiz").classList.add("hidden");$("interlude").classList.remove("hidden");$("memoryPicture").innerHTML=item.scene.split(" ").map(symbol=>"<span>"+symbol+"</span>").join("");$("loveNote").textContent=note.text+" "+note.heart;$("nextQuestion").textContent=index<questions.length-1?"Next question 💌":"Go to the marriage proposal 💍";}
+$("nextQuestion").onclick=()=>{
+  $("interlude").classList.add("hidden");
+  if(index<questions.length-1){index++;$("quiz").classList.remove("hidden");render()}
+  else{$("proposal").classList.remove("hidden");$("bar").style.width="100%"}
+};
+$("no").onclick=()=>{noCount++;const messages=["Hehe, try again, papa 🙈❤️","That button seems a little shy! Try again 😚","My heart is still hoping for YES 🥹","One more try? My forever has your name 💍","The NO button is getting tired 😅💕","Still asking with all my heart ❤️","You know which answer would make me smile 🥰","Almost there, papa 🙈","The YES button is waiting for you 💖","Okay, the playful NO button is taking a nap now 😘"];if(noCount>=10){$("no").disabled=true;$("no").style.opacity=".45";$("no").style.cursor="not-allowed";$("hint").textContent="The NO button is taking a nap now 💗 If you want to say yes, tap YES ❤️"}else{$("hint").textContent=messages[noCount-1]+" · Try NO hint 😉"}};
+
+function launchCelebration(){
+  const overlay=$("celebrationOverlay");
+  overlay.classList.remove("hidden");
+  document.title="She said YES! ❤️💍";
+  const party=["💖","💕","💗","💘","❤️","🌹","✨","🎉","💍","🥹","💞","🎊","🎈","🎉","🩷"];
+  // A big burst of colourful party confetti exploding out from the center of the screen.
+  for(let i=0;i<300;i++){
+    const piece=document.createElement("span");
+    piece.className="burst-piece";
+    piece.textContent=party[Math.floor(Math.random()*party.length)];
+    const angle=Math.random()*Math.PI*2;
+    const distance=120+Math.random()*Math.max(window.innerWidth,window.innerHeight)*.72;
+    piece.style.setProperty("--burst-x",Math.cos(angle)*distance+"px");
+    piece.style.setProperty("--burst-y",Math.sin(angle)*distance+"px");
+    piece.style.setProperty("--spin",(Math.random()*1100-550)+"deg");
+    piece.style.setProperty("--burst-time",(1.5+Math.random()*1.8)+"s");
+    piece.style.setProperty("--particle-size",(18+Math.random()*24)+"px");
+    piece.style.animationDelay=(Math.random()*.25)+"s";
+    document.body.appendChild(piece);
+    piece.addEventListener("animationend",()=>piece.remove(),{once:true});
+  }
+  // Colourful balloons float up across the whole screen.
+  const balloons=["🎈","🎈","🎈","💖","🎈","💕","🎈"];
+  for(let i=0;i<24;i++){
+    const balloon=document.createElement("span");
+    balloon.className="party-balloon";
+    balloon.textContent=balloons[Math.floor(Math.random()*balloons.length)];
+    balloon.style.left=(Math.random()*94)+"vw";
+    balloon.style.setProperty("--balloon-size",(38+Math.random()*38)+"px");
+    balloon.style.setProperty("--balloon-time",(4+Math.random()*3)+"s");
+    balloon.style.setProperty("--balloon-drift",(Math.random()*180-90)+"px");
+    balloon.style.animationDelay=(Math.random()*.8)+"s";
+    document.body.appendChild(balloon);
+    balloon.addEventListener("animationend",()=>balloon.remove(),{once:true});
+  }
+  // Extra confetti rains down after the initial explosion.
+  for(let i=0;i<100;i++){
+    const piece=document.createElement("span");
+    piece.className="confetti-piece";
+    piece.textContent=party[Math.floor(Math.random()*party.length)];
+    piece.style.setProperty("--left",Math.random()*100+"vw");
+    piece.style.setProperty("--fall-time",(2.4+Math.random()*3.5)+"s");
+    piece.style.setProperty("--drift",(Math.random()*240-120)+"px");
+    piece.style.animationDelay=(Math.random()*.9)+"s";
+    document.body.appendChild(piece);
+    piece.addEventListener("animationend",()=>piece.remove(),{once:true});
+  }
+}
+$("yes").onclick=()=>{$("proposal").classList.add("hidden");$("done").classList.remove("hidden");launchCelebration()};
+$("closeCelebration").onclick=()=>{$("celebrationOverlay").classList.add("hidden")};
+$("celebrationOverlay").addEventListener("click",event=>{if(event.target.id==="celebrationOverlay")$("celebrationOverlay").classList.add("hidden")});
+
+</script></body></html>
