@@ -52,7 +52,7 @@
 
 .reply-hint.invalid{color:#b3264a}
 .reply-hint.valid{color:#28784b}
-</style></head><body><main class="card"><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose as many answers as feel right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
+</style></head><body><main class="card"><button class="secondary" id="resetJourney" style="display:block;margin:0 0 16px auto;padding:10px 14px;font:13px Arial,sans-serif">Reset all answers ↻</button><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose as many answers as feel right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
   <div class="memory-picture" id="memoryPicture" aria-label="Cute romantic emojis"></div>
   <p class="love-note" id="loveNote" aria-live="polite"></p>
   <label for="loveReply" class="reply-label">Your turn, my love 💌</label>
@@ -83,10 +83,13 @@ const questions=[
 {q:"What is the most important thing you want us to promise each other before marriage?",a:["To be honest and faithful to each other 🤍","To respect, support, and protect our bond 🫶","To keep communicating and never stop trying 💌"],scene:"🤞 💖 💍",caption:"A promise made with love, kept with actions."},
 {q:"After everything we have shared, the happy moments, the fights, the lessons, and the dreams… will you choose me as your life partner and build our future together?",a:["Yes, I'll keep choosing us ❤️","Yes, let's build our future as a team 🏡","Yes, today and through every chapter 💍🥹"],scene:"💑 🌹 💍",caption:"Every chapter brought us here. Our forever story is waiting."}
 ];
-let index=0,noCount=0;const $=id=>document.getElementById(id);$("start").onclick=()=>{$("start").classList.add("hidden");$("quiz").classList.remove("hidden");render()};
-let selectedAnswers=[];
-function render(){const item=questions[index];selectedAnswers=[];$("step").textContent="QUESTION "+(index+1)+" OF "+questions.length;$("bar").style.width=((index)/questions.length*100)+"%";$("question").textContent=item.q;$("answers").innerHTML="";$("continueAnswer").disabled=true;item.a.forEach((answer,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=answer;b.setAttribute("aria-pressed","false");b.onclick=()=>{const selected=selectedAnswers.includes(i);if(selected){selectedAnswers=selectedAnswers.filter(n=>n!==i)}else{selectedAnswers.push(i)}b.style.borderColor=!selected?"#c22e58":"#eccbd5";b.style.background=!selected?"#fff0f5":"white";b.setAttribute("aria-pressed",!selected?"true":"false");$("continueAnswer").disabled=selectedAnswers.length===0};$("answers").appendChild(b)})}
-$("continueAnswer").onclick=()=>{if(selectedAnswers.length>0)indexAnswered(selectedAnswers.slice())};
+const STORAGE_KEY="jayapriyaProposalProgressV1";
+let index=0,noCount=0;const $=id=>document.getElementById(id);
+let selectedAnswers=[];let answersByQuestion={};let phase="start";let savedReply="";
+function saveProgress(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({index,noCount,answersByQuestion,selectedAnswers,phase,savedReply:$("loveReply").value,acceptedReplies:acceptedReplies.slice()}))}catch(e){}}
+$("start").onclick=()=>{$("start").classList.add("hidden");$("quiz").classList.remove("hidden");phase="quiz";render();saveProgress()};
+function render(){const item=questions[index];selectedAnswers=(answersByQuestion[index]||[]).slice();$("step").textContent="QUESTION "+(index+1)+" OF "+questions.length;$("bar").style.width=((index)/questions.length*100)+"%";$("question").textContent=item.q;$("answers").innerHTML="";$("continueAnswer").disabled=selectedAnswers.length===0;item.a.forEach((answer,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=answer;const chosen=selectedAnswers.includes(i);b.setAttribute("aria-pressed",chosen?"true":"false");b.style.borderColor=chosen?"#c22e58":"#eccbd5";b.style.background=chosen?"#fff0f5":"white";b.onclick=()=>{const selected=selectedAnswers.includes(i);if(selected){selectedAnswers=selectedAnswers.filter(n=>n!==i)}else{selectedAnswers.push(i)}answersByQuestion[index]=selectedAnswers.slice();b.style.borderColor=!selected?"#c22e58":"#eccbd5";b.style.background=!selected?"#fff0f5":"white";b.setAttribute("aria-pressed",!selected?"true":"false");$("continueAnswer").disabled=selectedAnswers.length===0;saveProgress()};$("answers").appendChild(b)})}
+$("continueAnswer").onclick=()=>{if(selectedAnswers.length>0){answersByQuestion[index]=selectedAnswers.slice();indexAnswered(selectedAnswers.slice());phase="interlude";saveProgress()}};
 const loveNotes=[
   {text:"I love you d naayea",heart:"💖"},
   {text:"I love you d kuttima",heart:"💕"},
@@ -99,10 +102,11 @@ const loveNotes=[
   {text:"I love you d papa",heart:"🩷"},
   {text:"I love you d papa",heart:"💟"}
 ];
-function indexAnswered(choice){const item=questions[index];const note=loveNotes[index];$("quiz").classList.add("hidden");$("interlude").classList.remove("hidden");$("memoryPicture").innerHTML=item.scene.split(" ").map(symbol=>"<span>"+symbol+"</span>").join("");$("loveNote").textContent=note.text+" "+note.heart;$("loveReply").value="";$("replyHint").textContent="Hint: include “love you” in your message ❤️";$("nextQuestion").textContent=index<questions.length-1?"Next question 💌":"Go to the marriage proposal 💍";$("nextQuestion").disabled=true;}
+function indexAnswered(choice){const item=questions[index];const note=loveNotes[index];$("quiz").classList.add("hidden");$("interlude").classList.remove("hidden");$("memoryPicture").innerHTML=item.scene.split(" ").map(symbol=>"<span>"+symbol+"</span>").join("");$("loveNote").textContent=note.text+" "+note.heart;$("loveReply").value=savedReply||"";$("replyHint").textContent="Hint: include “love you” in your message ❤️";$("nextQuestion").textContent=index<questions.length-1?"Next question 💌":"Go to the marriage proposal 💍";$("nextQuestion").disabled=true;$("loveReply").dispatchEvent(new Event("input"));}
 const acceptedReplies=[];
 function normalizeReply(value){return value.toLowerCase().replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ")}
 $("loveReply").addEventListener("input",()=>{
+  savedReply=$("loveReply").value;saveProgress();
   const raw=$("loveReply").value;
   const normalized=normalizeReply(raw);
   const hasLoveYou=/\blove\s+you\b/i.test(raw);
@@ -116,12 +120,11 @@ $("nextQuestion").onclick=()=>{
   const raw=$("loveReply").value;
   const normalized=normalizeReply(raw);
   if(!/\blove\s+you\b/i.test(raw)||!normalized||acceptedReplies.includes(normalized))return;
-  acceptedReplies.push(normalized);
-  $("interlude").classList.add("hidden");
-  if(index<questions.length-1){index++;$("quiz").classList.remove("hidden");render()}
-  else{$("proposal").classList.remove("hidden");$("bar").style.width="100%"}
+  acceptedReplies.push(normalized);savedReply="";$("interlude").classList.add("hidden");
+  if(index<questions.length-1){index++;phase="quiz";$("quiz").classList.remove("hidden");render()}
+  else{phase="proposal";$("proposal").classList.remove("hidden");$("bar").style.width="100%"}saveProgress()
 };
-$("no").onclick=()=>{noCount++;const messages=["Hehe, try again, papa 🙈❤️","That button seems a little shy! Try again 😚","My heart is still hoping for YES 🥹","One more try? My forever has your name 💍","The NO button is getting tired 😅💕","Still asking with all my heart ❤️","You know which answer would make me smile 🥰","Almost there, papa 🙈","The YES button is waiting for you 💖","Okay, the playful NO button is taking a nap now 😘"];if(noCount>=10){$("no").disabled=true;$("no").style.opacity=".45";$("no").style.cursor="not-allowed";$("hint").textContent="The NO button is taking a nap now 💗 If you want to say yes, tap YES ❤️"}else{$("hint").textContent=messages[noCount-1]+" · Try NO hint 😉"}};
+$("no").onclick=()=>{noCount++;const messages=["Hehe, try again, papa 🙈❤️","That button seems a little shy! Try again 😚","My heart is still hoping for YES 🥹","One more try? My forever has your name 💍","The NO button is getting tired 😅💕","Still asking with all my heart ❤️","You know which answer would make me smile 🥰","Almost there, papa 🙈","The YES button is waiting for you 💖","Okay, the playful NO button is taking a nap now 😘"];if(noCount>=10){$("no").disabled=true;$("no").style.opacity=".45";$("no").style.cursor="not-allowed";$("hint").textContent="The NO button is taking a nap now 💗 If you want to say yes, tap YES ❤️"}else{$("hint").textContent=messages[noCount-1]+" · Try NO hint 😉"}saveProgress()};
 
 function launchCelebration(){
   const overlay=$("celebrationOverlay");
@@ -171,8 +174,10 @@ function launchCelebration(){
     piece.addEventListener("animationend",()=>piece.remove(),{once:true});
   }
 }
-$("yes").onclick=()=>{$("proposal").classList.add("hidden");$("done").classList.remove("hidden");launchCelebration()};
+$("yes").onclick=()=>{$("proposal").classList.add("hidden");$("done").classList.remove("hidden");phase="done";saveProgress();launchCelebration()};
 $("closeCelebration").onclick=()=>{$("celebrationOverlay").classList.add("hidden")};
 $("celebrationOverlay").addEventListener("click",event=>{if(event.target.id==="celebrationOverlay")$("celebrationOverlay").classList.add("hidden")});
 
+$("resetJourney").onclick=()=>{if(confirm("Erase all saved answers and restart the whole journey? 💗")){try{localStorage.removeItem(STORAGE_KEY)}catch(e){}location.reload()}};
+(function restoreProgress(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const saved=JSON.parse(raw);index=Math.max(0,Math.min(questions.length-1,Number(saved.index)||0));noCount=Math.max(0,Number(saved.noCount)||0);answersByQuestion=saved.answersByQuestion&&typeof saved.answersByQuestion==="object"?saved.answersByQuestion:{};selectedAnswers=Array.isArray(saved.selectedAnswers)?saved.selectedAnswers:[];phase=["start","quiz","interlude","proposal","done"].includes(saved.phase)?saved.phase:"start";savedReply=typeof saved.savedReply==="string"?saved.savedReply:"";if(Array.isArray(saved.acceptedReplies)){acceptedReplies.splice(0,acceptedReplies.length,...saved.acceptedReplies.filter(x=>typeof x==="string"))}if(phase!=="start")$("start").classList.add("hidden");if(phase==="quiz"){$("quiz").classList.remove("hidden");render()}else if(phase==="interlude"){indexAnswered(answersByQuestion[index]||[])}else if(phase==="proposal"){$("proposal").classList.remove("hidden");$("bar").style.width="100%"}else if(phase==="done"){$("done").classList.remove("hidden");$("bar").style.width="100%"}if(noCount>=10){$("no").disabled=true;$("no").style.opacity=".45";$("no").style.cursor="not-allowed";$("hint").textContent="The NO button is taking a nap now 💗 If you want to say yes, tap YES ❤️"}}catch(e){}})();
 </script></body></html>
