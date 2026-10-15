@@ -21,7 +21,23 @@
 @keyframes ringBounce{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.12) rotate(4deg)}}
 @keyframes confettiFall{0%{transform:translate3d(0,-10vh,0) rotate(0deg);opacity:1}100%{transform:translate3d(var(--drift,40px),110vh,0) rotate(780deg);opacity:0}}
 
+.pdf-cover{display:none}
 #summaryContent .summary-item{padding:16px 0;border-bottom:1px solid #efd3dc;break-inside:avoid}
+@media print{
+  .pdf-cover{display:flex!important;min-height:250mm;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;padding:20mm 12mm;color:#6e1836;background:linear-gradient(145deg,#fff7fa,#ffe5ed 55%,#fff6e7);border:3px double #d8a64c;break-after:page;page-break-after:always}
+  .cover-sparkles{font-size:25pt;letter-spacing:10pt;margin-bottom:12mm}
+  .cover-envelope{font-size:58pt;margin:0 0 8mm}
+  .cover-eyebrow{font:700 10pt Arial,sans-serif;letter-spacing:4pt;color:#a84a67;margin-bottom:8mm}
+  .cover-title{font-size:38pt;line-height:1.25;color:#6e1836;margin:0}
+  .cover-title span{color:#c22e58}
+  .cover-divider{font-size:14pt;color:#d8a64c;letter-spacing:3pt;margin:10mm 0}
+  .cover-names{font-size:24pt;font-weight:bold;color:#8e1e43}
+  .cover-names span{color:#d8a64c}
+  .cover-message{max-width:125mm;font-size:14pt;line-height:1.8;color:#7e5260;margin:10mm auto}
+  .cover-ring{font-size:58pt;margin-top:4mm}
+  .cover-date{font:10pt Arial,sans-serif;color:#9c6979;margin-top:8mm}
+  .cover-footer{font:8pt Arial,sans-serif;letter-spacing:2pt;color:#a84a67;margin-top:15mm}
+}
 #summaryContent .summary-question{font-weight:bold;color:#8e1e43;line-height:1.5;margin-bottom:8px}
 #summaryContent .summary-answer{color:#5e3544;line-height:1.6;margin:4px 0}
 #summaryContent .summary-reply{font-style:italic;color:#8a5367;line-height:1.6;margin-top:8px}
@@ -35,6 +51,7 @@
   #summary .eyebrow{color:#8e1e43}
   #summary .subtitle{color:#444}
   #summary .heart,#summary button,#summary .note,.footer,#resetJourney{display:none!important}
+  #summary .pdf-cover{display:flex!important;visibility:visible!important}
   #summaryContent .summary-item{border-bottom:1px solid #ccc;padding:10px 0}
   #summaryContent .summary-question{color:#222}
   #summaryContent .summary-answer,#summaryContent .summary-reply{color:#333}
@@ -79,6 +96,7 @@
   <p id="replyHint" class="reply-hint">Hint: include “love you” in your message ❤️</p>
   <button class="primary" id="nextQuestion" disabled>Next question 💌</button>
 </section><section id="proposal" class="hidden"><div class="heart">💍❤️</div><div class="eyebrow">One last question</div><h2 class="title">Will you marry me, papa? ❤️</h2><p class="subtitle">Jaya, you are my favourite person, my safe place, and the one I want beside me through all of life's chapters. Will you make me the happiest person and choose this forever with me? 🌹</p><div class="final-buttons"><button class="primary yes" id="yes">YES! ❤️</button><button class="no" id="no">No 🙈</button></div><p class="tiny" id="hint">Hint: try “No” 😉</p></section><section id="summary" class="hidden">
+  <div id="pdfCover" class="pdf-cover"><div class="cover-sparkles">✨ 💖 ✨</div><div class="cover-envelope">💌</div><div class="cover-eyebrow">A KEEPSAKE OF OUR LOVE</div><h1 class="cover-title">Our Answers,<br><span>Our Forever</span> ❤️</h1><div class="cover-divider">♥ ───── ♥ ───── ♥</div><div class="cover-names">Jeevirajaa <span>♡</span> Jayapriya</div><p class="cover-message">Every choice, every little message, and one beautiful YES — a memory of the love we choose together.</p><div class="cover-ring">💍</div><div class="cover-date" id="coverDate"></div><div class="cover-footer">MADE WITH ALL MY LOVE · FOREVER YOURS</div></div>
   <div class="heart">💌</div><div class="eyebrow">Our little love story</div>
   <h2 class="title">Our Answers, Our Forever ❤️</h2>
   <p class="subtitle">Jayapriya's choices from our little journey, saved with love by Jeevirajaa. 💗</p>
@@ -207,6 +225,7 @@ $("closeCelebration").onclick=showSummary;
 $("downloadPdf").onclick=()=>window.print();
 $("backToHug").onclick=()=>{$("summary").classList.add("hidden");$("done").classList.remove("hidden");phase="done";saveProgress();window.scrollTo(0,0)};
 function renderSummary(){
+  const dateNode=$("coverDate");if(dateNode){dateNode.textContent="Created with love on "+new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"})}
   const host=$("summaryContent"); host.innerHTML="";
   questions.forEach((item,i)=>{
     const wrap=document.createElement("div");wrap.className="summary-item";
