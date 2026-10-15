@@ -20,6 +20,25 @@
 @keyframes floatHearts{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes ringBounce{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.12) rotate(4deg)}}
 @keyframes confettiFall{0%{transform:translate3d(0,-10vh,0) rotate(0deg);opacity:1}100%{transform:translate3d(var(--drift,40px),110vh,0) rotate(780deg);opacity:0}}
+
+#summaryContent .summary-item{padding:16px 0;border-bottom:1px solid #efd3dc;break-inside:avoid}
+#summaryContent .summary-question{font-weight:bold;color:#8e1e43;line-height:1.5;margin-bottom:8px}
+#summaryContent .summary-answer{color:#5e3544;line-height:1.6;margin:4px 0}
+#summaryContent .summary-reply{font-style:italic;color:#8a5367;line-height:1.6;margin-top:8px}
+@media print{
+  @page{size:auto;margin:16mm}
+  body{display:block;background:#fff!important;padding:0!important;color:#222!important}
+  body *{visibility:hidden!important}
+  #summary,#summary *{visibility:visible!important}
+  #summary{display:block!important;position:absolute;inset:0;width:100%;margin:0;padding:0;border:0;box-shadow:none;background:#fff!important;text-align:left}
+  #summary .title{font-size:26pt;color:#8e1e43}
+  #summary .eyebrow{color:#8e1e43}
+  #summary .subtitle{color:#444}
+  #summary .heart,#summary button,#summary .note,.footer,#resetJourney{display:none!important}
+  #summaryContent .summary-item{border-bottom:1px solid #ccc;padding:10px 0}
+  #summaryContent .summary-question{color:#222}
+  #summaryContent .summary-answer,#summaryContent .summary-reply{color:#333}
+}
 @media(prefers-reduced-motion:reduce){.celebration-overlay,.celebration-modal,.celebration-ring,.celebration-modal:before,.celebration-modal:after,.confetti-piece{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
 /* Explosive party poppers: confetti bursts from the center and balloons rise */
@@ -59,7 +78,15 @@
   <textarea id="loveReply" class="love-reply" rows="2" placeholder="Type a little love for me... 💗" autocomplete="off"></textarea>
   <p id="replyHint" class="reply-hint">Hint: include “love you” in your message ❤️</p>
   <button class="primary" id="nextQuestion" disabled>Next question 💌</button>
-</section><section id="proposal" class="hidden"><div class="heart">💍❤️</div><div class="eyebrow">One last question</div><h2 class="title">Will you marry me, papa? ❤️</h2><p class="subtitle">Jaya, you are my favourite person, my safe place, and the one I want beside me through all of life's chapters. Will you make me the happiest person and choose this forever with me? 🌹</p><div class="final-buttons"><button class="primary yes" id="yes">YES! ❤️</button><button class="no" id="no">No 🙈</button></div><p class="tiny" id="hint">Hint: try “No” 😉</p></section><section id="done" class="hidden"><div class="celebrate">💖 🌹 💍 🌹 💖</div><h2 class="title">You made my heart so happy, papa! ❤️</h2><p class="subtitle">Here's to choosing each other, making memories, solving problems together, and loving each other more every day. Forever starts with us. — Jeevirajaa</p><p class="celebrate">🥹💕🎉</p><button class="secondary" onclick="location.reload()">Replay our little journey ↻</button></section><div class="footer">MADE WITH LOVE · JEEVIRAJAA ♡ JAYAPRIYA</div></main>
+</section><section id="proposal" class="hidden"><div class="heart">💍❤️</div><div class="eyebrow">One last question</div><h2 class="title">Will you marry me, papa? ❤️</h2><p class="subtitle">Jaya, you are my favourite person, my safe place, and the one I want beside me through all of life's chapters. Will you make me the happiest person and choose this forever with me? 🌹</p><div class="final-buttons"><button class="primary yes" id="yes">YES! ❤️</button><button class="no" id="no">No 🙈</button></div><p class="tiny" id="hint">Hint: try “No” 😉</p></section><section id="summary" class="hidden">
+  <div class="heart">💌</div><div class="eyebrow">Our little love story</div>
+  <h2 class="title">Our Answers, Our Forever ❤️</h2>
+  <p class="subtitle">Jayapriya's choices from our little journey, saved with love by Jeevirajaa. 💗</p>
+  <div id="summaryContent" style="text-align:left;margin:24px auto;max-width:600px"></div>
+  <button class="primary" id="downloadPdf">Download our answers as PDF 📄</button>
+  <p class="note">Tap the button, then choose “Save as PDF” in the print options. You can save or share your keepsake. 💕</p>
+  <button class="secondary" id="backToHug" style="margin-top:10px">Back to our hug 🤗</button>
+</section><section id="done" class="hidden"><div class="celebrate">💖 🌹 💍 🌹 💖</div><h2 class="title">You made my heart so happy, papa! ❤️</h2><p class="subtitle">Here's to choosing each other, making memories, solving problems together, and loving each other more every day. Forever starts with us. — Jeevirajaa</p><p class="celebrate">🥹💕🎉</p><button class="secondary" onclick="location.reload()">Replay our little journey ↻</button></section><div class="footer">MADE WITH LOVE · JEEVIRAJAA ♡ JAYAPRIYA</div></main>
 
 <div id="celebrationOverlay" class="celebration-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="celebrationTitle">
   <div class="celebration-modal">
@@ -175,9 +202,27 @@ function launchCelebration(){
   }
 }
 $("yes").onclick=()=>{$("proposal").classList.add("hidden");$("done").classList.remove("hidden");phase="done";saveProgress();launchCelebration()};
-$("closeCelebration").onclick=()=>{$("celebrationOverlay").classList.add("hidden")};
+function showSummary(){ $("celebrationOverlay").classList.add("hidden"); $("done").classList.add("hidden"); $("summary").classList.remove("hidden"); phase="summary"; renderSummary(); saveProgress(); window.scrollTo(0,0); }
+$("closeCelebration").onclick=showSummary;
+$("downloadPdf").onclick=()=>window.print();
+$("backToHug").onclick=()=>{$("summary").classList.add("hidden");$("done").classList.remove("hidden");phase="done";saveProgress();window.scrollTo(0,0)};
+function renderSummary(){
+  const host=$("summaryContent"); host.innerHTML="";
+  questions.forEach((item,i)=>{
+    const wrap=document.createElement("div");wrap.className="summary-item";
+    const q=document.createElement("div");q.className="summary-question";q.textContent=(i+1)+". "+item.q;wrap.appendChild(q);
+    const picks=Array.isArray(answersByQuestion[i])?answersByQuestion[i]:[];
+    if(picks.length){picks.forEach(n=>{if(item.a[n]!==undefined){const a=document.createElement("div");a.className="summary-answer";a.textContent="✓ "+item.a[n];wrap.appendChild(a)}})}
+    else{const a=document.createElement("div");a.className="summary-answer";a.textContent="No answer saved";wrap.appendChild(a)}
+    if(acceptedReplies[i]){const reply=document.createElement("div");reply.className="summary-reply";reply.textContent="Her love message: “"+acceptedReplies[i]+"”";wrap.appendChild(reply)}
+    host.appendChild(wrap);
+  });
+  const final=document.createElement("div");final.className="summary-item";
+  const q=document.createElement("div");q.className="summary-question";q.textContent="Final proposal: Will you marry me, papa? ❤️";final.appendChild(q);
+  const a=document.createElement("div");a.className="summary-answer";a.textContent="Her answer: YES! ❤️💍";final.appendChild(a);host.appendChild(final);
+}
 $("celebrationOverlay").addEventListener("click",event=>{if(event.target.id==="celebrationOverlay")$("celebrationOverlay").classList.add("hidden")});
 
 $("resetJourney").onclick=()=>{if(confirm("Erase all saved answers and restart the whole journey? 💗")){try{localStorage.removeItem(STORAGE_KEY)}catch(e){}location.reload()}};
-(function restoreProgress(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const saved=JSON.parse(raw);index=Math.max(0,Math.min(questions.length-1,Number(saved.index)||0));noCount=Math.max(0,Number(saved.noCount)||0);answersByQuestion=saved.answersByQuestion&&typeof saved.answersByQuestion==="object"?saved.answersByQuestion:{};selectedAnswers=Array.isArray(saved.selectedAnswers)?saved.selectedAnswers:[];phase=["start","quiz","interlude","proposal","done"].includes(saved.phase)?saved.phase:"start";savedReply=typeof saved.savedReply==="string"?saved.savedReply:"";if(Array.isArray(saved.acceptedReplies)){acceptedReplies.splice(0,acceptedReplies.length,...saved.acceptedReplies.filter(x=>typeof x==="string"))}if(phase!=="start")$("start").classList.add("hidden");if(phase==="quiz"){$("quiz").classList.remove("hidden");render()}else if(phase==="interlude"){indexAnswered(answersByQuestion[index]||[])}else if(phase==="proposal"){$("proposal").classList.remove("hidden");$("bar").style.width="100%"}else if(phase==="done"){$("done").classList.remove("hidden");$("bar").style.width="100%"}if(noCount>=10){$("no").disabled=true;$("no").style.opacity=".45";$("no").style.cursor="not-allowed";$("hint").textContent="The NO button is taking a nap now 💗 If you want to say yes, tap YES ❤️"}}catch(e){}})();
+(function restoreProgress(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const saved=JSON.parse(raw);index=Math.max(0,Math.min(questions.length-1,Number(saved.index)||0));noCount=Math.max(0,Number(saved.noCount)||0);answersByQuestion=saved.answersByQuestion&&typeof saved.answersByQuestion==="object"?saved.answersByQuestion:{};selectedAnswers=Array.isArray(saved.selectedAnswers)?saved.selectedAnswers:[];phase=["start","quiz","interlude","proposal","done","summary"].includes(saved.phase)?saved.phase:"start";savedReply=typeof saved.savedReply==="string"?saved.savedReply:"";if(Array.isArray(saved.acceptedReplies)){acceptedReplies.splice(0,acceptedReplies.length,...saved.acceptedReplies.filter(x=>typeof x==="string"))}if(phase!=="start")$("start").classList.add("hidden");if(phase==="quiz"){$("quiz").classList.remove("hidden");render()}else if(phase==="interlude"){indexAnswered(answersByQuestion[index]||[])}else if(phase==="proposal"){$("proposal").classList.remove("hidden");$("bar").style.width="100%"}else if(phase==="done"){$("done").classList.remove("hidden");$("bar").style.width="100%"}else if(phase==="summary"){$("summary").classList.remove("hidden");renderSummary();$("bar").style.width="100%"}if(noCount>=10){$("no").disabled=true;$("no").style.opacity=".45";$("no").style.cursor="not-allowed";$("hint").textContent="The NO button is taking a nap now 💗 If you want to say yes, tap YES ❤️"}}catch(e){}})();
 </script></body></html>
