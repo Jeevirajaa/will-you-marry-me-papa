@@ -3,6 +3,24 @@
 <style>
 :root{--rose:#c22e58;--deep:#6e1836;--cream:#fff8f1;--pink:#ffe3eb;--gold:#d8a64c}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;background:radial-gradient(circle at top,#fff7f8,#f9dce5 48%,#f4c8d6);font-family:Georgia,serif;color:#4a2130}.card{width:min(720px,100%);background:rgba(255,250,246,.97);border:1px solid #e8bdc9;border-radius:28px;padding:clamp(22px,5vw,48px);box-shadow:0 18px 55px #7c24421c;text-align:center}.eyebrow{letter-spacing:.2em;text-transform:uppercase;font:700 11px Arial;color:#a84a67}.heart{font-size:38px;margin:6px}.title{font-size:clamp(30px,7vw,48px);color:var(--deep);margin:8px 0 12px}.subtitle{line-height:1.6;color:#7e5260}.progress{height:7px;background:#f3dce3;border-radius:20px;overflow:hidden;margin:24px 0 8px}.bar{height:100%;width:0;background:linear-gradient(90deg,#d64b72,#e3ad57);transition:width .3s}.step{font:12px Arial;color:#9c6979}.question{font-size:clamp(23px,5vw,32px);line-height:1.35;margin:28px 0 24px}.answers{display:grid;gap:12px;max-width:480px;margin:0 auto}.answer,.primary,.secondary{border:0;border-radius:15px;padding:15px 18px;font-size:16px;cursor:pointer}.answer{background:white;border:1px solid #eccbd5;color:#61253c;text-align:left}.answer:hover,.primary:hover,.secondary:hover{filter:brightness(.98);transform:translateY(-1px)}.primary{background:linear-gradient(135deg,#c52f5a,#8e1e43);color:white;font-weight:bold}.secondary{background:#f8e6eb;color:#7c2944}.note{font:13px Arial;color:#9b6b7a;margin-top:18px}.hidden{display:none!important}.final-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;min-height:58px}.final-buttons button{min-width:130px}.yes{background:linear-gradient(135deg,#c52f5a,#8e1e43);color:#fff;font-weight:bold}.no{background:#f8e6eb;color:#7c2944;border:1px solid #eccbd5}.tiny{font-size:12px;color:#9a7180;margin-top:14px}.footer{margin-top:26px;font:11px Arial;letter-spacing:.12em;color:#bb8a99}.celebrate{font-size:30px;line-height:1.8}
 
+
+/* Timed opening gate: countdown until 17 October 2026, 8:00 AM India time */
+body.gated{display:block;min-height:100vh;padding:0;overflow:hidden}
+body.gated>main,body.gated>#celebrationOverlay{visibility:hidden}
+.countdown-gate{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;overflow:auto;padding:22px;background:radial-gradient(circle at 50% 0%,#fff9fb,#f8dce6 55%,#efc3d3);font-family:Georgia,serif;color:#4a2130}
+.countdown-gate.hidden{display:none!important}
+.countdown-card{width:min(680px,100%);padding:clamp(25px,6vw,52px);border:2px solid #e7b6c7;border-radius:30px;background:rgba(255,250,247,.96);box-shadow:0 20px 70px #7c244225;text-align:center}
+.countdown-hearts{font-size:clamp(30px,7vw,48px);margin-bottom:10px}
+.countdown-kicker{font:700 11px Arial,sans-serif;letter-spacing:.22em;color:#a84a67;text-transform:uppercase}
+.countdown-title{font-size:clamp(32px,7vw,52px);line-height:1.15;color:#6e1836;margin:15px 0}
+.countdown-copy{font-size:clamp(15px,3.5vw,19px);line-height:1.7;color:#7e5260;max-width:470px;margin:0 auto}
+.countdown-units{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:28px auto 20px;max-width:480px}
+.countdown-unit{padding:15px 5px;border:1px solid #edc8d4;border-radius:16px;background:linear-gradient(180deg,#fff,#fff0f5)}
+.countdown-number{font:700 clamp(27px,6vw,42px) Arial,sans-serif;color:#a51f4a;font-variant-numeric:tabular-nums}
+.countdown-label{font:10px Arial,sans-serif;letter-spacing:.12em;color:#a16a7e;margin-top:7px}
+.countdown-foot{font:12px Arial,sans-serif;color:#a16b7c;line-height:1.7;margin-top:22px}
+@media(max-width:390px){.countdown-units{gap:5px}.countdown-unit{padding:12px 2px}.countdown-label{letter-spacing:.04em;font-size:9px}}
+
 /* Big YES celebration */
 .celebration-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:18px;background:rgba(74,12,39,.78);backdrop-filter:blur(7px);animation:overlayIn .35s ease-out}
 .celebration-overlay.hidden{display:none!important}
@@ -88,7 +106,7 @@
 
 .reply-hint.invalid{color:#b3264a}
 .reply-hint.valid{color:#28784b}
-</style></head><body><main class="card"><button class="secondary" id="resetJourney" style="display:block;margin:0 0 16px auto;padding:10px 14px;font:13px Arial,sans-serif">Reset all answers ↻</button><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose as many answers as feel right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
+</style></head><body class="gated"><div id="countdownGate" class="countdown-gate" role="status" aria-live="polite"><div class="countdown-card"><div class="countdown-hearts">💌 💗 💍</div><div class="countdown-kicker">A little surprise is on its way</div><h1 class="countdown-title">For my Jayapriya ❤️</h1><p class="countdown-copy">Our little journey of love will open at <strong>8:00 AM on 17 October 2026</strong>.<br>Until then, let the countdown bring us closer. 🥹💕</p><div class="countdown-units"><div class="countdown-unit"><div class="countdown-number" id="cdDays">00</div><div class="countdown-label">DAYS</div></div><div class="countdown-unit"><div class="countdown-number" id="cdHours">00</div><div class="countdown-label">HOURS</div></div><div class="countdown-unit"><div class="countdown-number" id="cdMinutes">00</div><div class="countdown-label">MINUTES</div></div><div class="countdown-unit"><div class="countdown-number" id="cdSeconds">00</div><div class="countdown-label">SECONDS</div></div></div><p class="countdown-foot">The wait is part of the surprise. ✨<br>Made with all my love, Jeevirajaa ♡</p></div></div><main class="card"><button class="secondary" id="resetJourney" style="display:block;margin:0 0 16px auto;padding:10px 14px;font:13px Arial,sans-serif">Reset all answers ↻</button><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose as many answers as feel right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
   <div class="memory-picture" id="memoryPicture" aria-label="Cute romantic emojis"></div>
   <p class="love-note" id="loveNote" aria-live="polite"></p>
   <label for="loveReply" class="reply-label">Your turn, my love 💌</label>
@@ -116,6 +134,27 @@
   </div>
 </div>
 <script>
+(function timedOpeningGate(){
+  const openingTime = new Date("2026-10-17T08:00:00+05:30").getTime();
+  const gate = document.getElementById("countdownGate");
+  function tick(){
+    const remaining = openingTime - Date.now();
+    if(remaining <= 0){
+      gate.classList.add("hidden");
+      document.body.classList.remove("gated");
+      document.body.style.overflow = "";
+      return;
+    }
+    document.body.classList.add("gated");
+    document.getElementById("cdDays").textContent = String(Math.floor(remaining/86400000)).padStart(2,"0");
+    document.getElementById("cdHours").textContent = String(Math.floor((remaining%86400000)/3600000)).padStart(2,"0");
+    document.getElementById("cdMinutes").textContent = String(Math.floor((remaining%3600000)/60000)).padStart(2,"0");
+    document.getElementById("cdSeconds").textContent = String(Math.floor((remaining%60000)/1000)).padStart(2,"0");
+    document.body.style.overflow = "hidden";
+  }
+  tick();
+  if(Date.now() < openingTime) window.setInterval(tick,1000);
+})();
 const questions=[
 {q:"When we have a misunderstanding, what matters most to you?",a:["Listening calmly and understanding each other 👂💗","Saying sorry when we are wrong 🥹","Remembering that we are on the same team 🤝❤️"],scene:"💬 💗 🫶",caption:"Even when words get tangled, our hearts can find each other."},
 {q:"If we have a big fight, what would you want us to do?",a:["Take a little time to calm down, then talk 🌷","Talk honestly and solve it together 🤝","Hug, forgive, and never stop respecting each other 🫂"],scene:"☁️ 🫂 🌈",caption:"After every storm, let's find our rainbow together."},
