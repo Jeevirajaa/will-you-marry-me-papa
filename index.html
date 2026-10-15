@@ -49,6 +49,9 @@
 .reply-hint{font:13px Arial,sans-serif;color:#9c526b;margin:9px 0 14px}
 #nextQuestion{display:block;width:min(100%,480px);margin:12px auto 0;min-height:54px}
 #nextQuestion:disabled{opacity:.55;cursor:not-allowed}
+
+.reply-hint.invalid{color:#b3264a}
+.reply-hint.valid{color:#28784b}
 </style></head><body><main class="card"><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose the answer that feels right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
   <div class="memory-picture" id="memoryPicture" aria-label="Cute romantic emojis"></div>
   <p class="love-note" id="loveNote" aria-live="polite"></p>
@@ -97,8 +100,27 @@ const loveNotes=[
   {text:"I love you d papa",heart:"💟"}
 ];
 function indexAnswered(choice){const item=questions[index];const note=loveNotes[index];$("quiz").classList.add("hidden");$("interlude").classList.remove("hidden");$("memoryPicture").innerHTML=item.scene.split(" ").map(symbol=>"<span>"+symbol+"</span>").join("");$("loveNote").textContent=note.text+" "+note.heart;$("loveReply").value="";$("replyHint").textContent="Hint: include “love you” in your message ❤️";$("nextQuestion").textContent=index<questions.length-1?"Next question 💌":"Go to the marriage proposal 💍";$("nextQuestion").disabled=true;}
-$("loveReply").addEventListener("input",()=>{const valid=/love\s*you/i.test($("loveReply").value);$("nextQuestion").disabled=!valid;$("replyHint").textContent=valid?"Awww, I love you too! You can continue 💖":"Hint: include “love you” in your message ❤️";});
-$("nextQuestion").onclick=()=>{if(!/love\s*you/i.test($("loveReply").value))return;$("interlude").classList.add("hidden");if(index<questions.length-1){index++;$("quiz").classList.remove("hidden");render()}else{$("proposal").classList.remove("hidden");$("bar").style.width="100%"}};
+const acceptedReplies=[];
+function normalizeReply(value){return value.toLowerCase().replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ")}
+$("loveReply").addEventListener("input",()=>{
+  const raw=$("loveReply").value;
+  const normalized=normalizeReply(raw);
+  const hasLoveYou=/\blove\s+you\b/i.test(raw);
+  const isNew=normalized.length>0&&!acceptedReplies.includes(normalized);
+  const valid=hasLoveYou&&isNew;
+  $("nextQuestion").disabled=!valid;
+  $("replyHint").className="reply-hint "+(valid?"valid":normalized.length>0&&!isNew?"invalid":"");
+  $("replyHint").textContent=!hasLoveYou?"Hint: include “love you” in your message ❤️":!isNew?"Use a different reply this time, my love 💗":"Awww, a new love message! You can continue 💖";
+});
+$("nextQuestion").onclick=()=>{
+  const raw=$("loveReply").value;
+  const normalized=normalizeReply(raw);
+  if(!/\blove\s+you\b/i.test(raw)||!normalized||acceptedReplies.includes(normalized))return;
+  acceptedReplies.push(normalized);
+  $("interlude").classList.add("hidden");
+  if(index<questions.length-1){index++;$("quiz").classList.remove("hidden");render()}
+  else{$("proposal").classList.remove("hidden");$("bar").style.width="100%"}
+};
 $("no").onclick=()=>{noCount++;const messages=["Hehe, try again, papa 🙈❤️","That button seems a little shy! Try again 😚","My heart is still hoping for YES 🥹","One more try? My forever has your name 💍","The NO button is getting tired 😅💕","Still asking with all my heart ❤️","You know which answer would make me smile 🥰","Almost there, papa 🙈","The YES button is waiting for you 💖","Okay, the playful NO button is taking a nap now 😘"];if(noCount>=10){$("no").disabled=true;$("no").style.opacity=".45";$("no").style.cursor="not-allowed";$("hint").textContent="The NO button is taking a nap now 💗 If you want to say yes, tap YES ❤️"}else{$("hint").textContent=messages[noCount-1]+" · Try NO hint 😉"}};
 
 function launchCelebration(){
