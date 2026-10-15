@@ -43,10 +43,22 @@
 #continueAnswer:disabled{opacity:.72;cursor:not-allowed;filter:saturate(.55)}
 #continueAnswer:not(:disabled){opacity:1;cursor:pointer;filter:none}
 
+.reply-label{display:block;margin:20px auto 8px;font-weight:bold;color:#8e1e43}
+.love-reply{display:block;width:100%;max-width:480px;margin:0 auto;padding:14px 16px;border:2px solid #eccbd5;border-radius:15px;background:#fff;color:#61253c;font:16px Arial,sans-serif;resize:vertical;outline:none}
+.love-reply:focus{border-color:#c22e58;box-shadow:0 0 0 3px #c22e581a}
+.reply-hint{font:13px Arial,sans-serif;color:#9c526b;margin:9px 0 14px}
+#nextQuestion{display:block;width:min(100%,480px);margin:12px auto 0;min-height:54px}
+#nextQuestion:disabled{opacity:.55;cursor:not-allowed}
+
+.reply-hint.invalid{color:#b3264a}
+.reply-hint.valid{color:#28784b}
 </style></head><body><main class="card"><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose as many answers as feel right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
   <div class="memory-picture" id="memoryPicture" aria-label="Cute romantic emojis"></div>
   <p class="love-note" id="loveNote" aria-live="polite"></p>
-  <button class="primary" id="nextQuestion">Next question 💌</button>
+  <label for="loveReply" class="reply-label">Your turn, my love 💌</label>
+  <textarea id="loveReply" class="love-reply" rows="2" placeholder="Type a little love for me... 💗" autocomplete="off"></textarea>
+  <p id="replyHint" class="reply-hint">Hint: include “love you” in your message ❤️</p>
+  <button class="primary" id="nextQuestion" disabled>Next question 💌</button>
 </section><section id="proposal" class="hidden"><div class="heart">💍❤️</div><div class="eyebrow">One last question</div><h2 class="title">Will you marry me, papa? ❤️</h2><p class="subtitle">Jaya, you are my favourite person, my safe place, and the one I want beside me through all of life's chapters. Will you make me the happiest person and choose this forever with me? 🌹</p><div class="final-buttons"><button class="primary yes" id="yes">YES! ❤️</button><button class="no" id="no">No 🙈</button></div><p class="tiny" id="hint">Hint: try “No” 😉</p></section><section id="done" class="hidden"><div class="celebrate">💖 🌹 💍 🌹 💖</div><h2 class="title">You made my heart so happy, papa! ❤️</h2><p class="subtitle">Here's to choosing each other, making memories, solving problems together, and loving each other more every day. Forever starts with us. — Jeevirajaa</p><p class="celebrate">🥹💕🎉</p><button class="secondary" onclick="location.reload()">Replay our little journey ↻</button></section><div class="footer">MADE WITH LOVE · JEEVIRAJAA ♡ JAYAPRIYA</div></main>
 
 <div id="celebrationOverlay" class="celebration-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="celebrationTitle">
@@ -87,8 +99,24 @@ const loveNotes=[
   {text:"I love you d papa",heart:"🩷"},
   {text:"I love you d papa",heart:"💟"}
 ];
-function indexAnswered(choice){const item=questions[index];const note=loveNotes[index];$("quiz").classList.add("hidden");$("interlude").classList.remove("hidden");$("memoryPicture").innerHTML=item.scene.split(" ").map(symbol=>"<span>"+symbol+"</span>").join("");$("loveNote").textContent=note.text+" "+note.heart;$("nextQuestion").textContent=index<questions.length-1?"Next question 💌":"Go to the marriage proposal 💍";}
+function indexAnswered(choice){const item=questions[index];const note=loveNotes[index];$("quiz").classList.add("hidden");$("interlude").classList.remove("hidden");$("memoryPicture").innerHTML=item.scene.split(" ").map(symbol=>"<span>"+symbol+"</span>").join("");$("loveNote").textContent=note.text+" "+note.heart;$("loveReply").value="";$("replyHint").textContent="Hint: include “love you” in your message ❤️";$("nextQuestion").textContent=index<questions.length-1?"Next question 💌":"Go to the marriage proposal 💍";$("nextQuestion").disabled=true;}
+const acceptedReplies=[];
+function normalizeReply(value){return value.toLowerCase().replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ")}
+$("loveReply").addEventListener("input",()=>{
+  const raw=$("loveReply").value;
+  const normalized=normalizeReply(raw);
+  const hasLoveYou=/\blove\s+you\b/i.test(raw);
+  const isNew=normalized.length>0&&!acceptedReplies.includes(normalized);
+  const valid=hasLoveYou&&isNew;
+  $("nextQuestion").disabled=!valid;
+  $("replyHint").className="reply-hint "+(valid?"valid":normalized.length>0&&!isNew?"invalid":"");
+  $("replyHint").textContent=!hasLoveYou?"Hint: include “love you” in your message ❤️":!isNew?"Use a different reply this time, my love 💗":"Awww, a new love message! You can continue 💖";
+});
 $("nextQuestion").onclick=()=>{
+  const raw=$("loveReply").value;
+  const normalized=normalizeReply(raw);
+  if(!/\blove\s+you\b/i.test(raw)||!normalized||acceptedReplies.includes(normalized))return;
+  acceptedReplies.push(normalized);
   $("interlude").classList.add("hidden");
   if(index<questions.length-1){index++;$("quiz").classList.remove("hidden");render()}
   else{$("proposal").classList.remove("hidden");$("bar").style.width="100%"}
