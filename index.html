@@ -52,7 +52,7 @@
 
 .reply-hint.invalid{color:#b3264a}
 .reply-hint.valid{color:#28784b}
-</style></head><body><main class="card"><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose the answer that feels right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
+</style></head><body><main class="card"><div class="heart">💌</div><div class="eyebrow">A little journey of love</div><h1 class="title">For my Jayapriya ❤️</h1><p class="subtitle">I made a tiny journey with a few questions, a lot of love, and one very important question at the end. Ready, papa? 🥹</p><button class="primary" id="start">Start our little journey 💗</button><section id="quiz" class="hidden"><div class="progress"><div class="bar" id="bar"></div></div><div class="step" id="step"></div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose as many answers as feel right to you 💕</p><button class="primary" id="continueAnswer" disabled>Next page 💌</button></section><section id="interlude" class="hidden">
   <div class="memory-picture" id="memoryPicture" aria-label="Cute romantic emojis"></div>
   <p class="love-note" id="loveNote" aria-live="polite"></p>
   <label for="loveReply" class="reply-label">Your turn, my love 💌</label>
@@ -84,9 +84,9 @@ const questions=[
 {q:"After everything we have shared, the happy moments, the fights, the lessons, and the dreams… will you choose me as your life partner and build our future together?",a:["Yes, I'll keep choosing us ❤️","Yes, let's build our future as a team 🏡","Yes, today and through every chapter 💍🥹"],scene:"💑 🌹 💍",caption:"Every chapter brought us here. Our forever story is waiting."}
 ];
 let index=0,noCount=0;const $=id=>document.getElementById(id);$("start").onclick=()=>{$("start").classList.add("hidden");$("quiz").classList.remove("hidden");render()};
-let selectedAnswer=-1;
-function render(){const item=questions[index];selectedAnswer=-1;$("step").textContent="QUESTION "+(index+1)+" OF "+questions.length;$("bar").style.width=((index)/questions.length*100)+"%";$("question").textContent=item.q;$("answers").innerHTML="";$("continueAnswer").disabled=true;item.a.forEach((answer,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=answer;b.setAttribute("aria-pressed","false");b.onclick=()=>{selectedAnswer=i;Array.from($("answers").children).forEach((el,j)=>{el.style.borderColor=j===i?"#c22e58":"#eccbd5";el.style.background=j===i?"#fff0f5":"white";el.setAttribute("aria-pressed",j===i?"true":"false")});$("continueAnswer").disabled=false};$("answers").appendChild(b)})}
-$("continueAnswer").onclick=()=>{if(selectedAnswer>=0)indexAnswered(selectedAnswer)};
+let selectedAnswers=[];
+function render(){const item=questions[index];selectedAnswers=[];$("step").textContent="QUESTION "+(index+1)+" OF "+questions.length;$("bar").style.width=((index)/questions.length*100)+"%";$("question").textContent=item.q;$("answers").innerHTML="";$("continueAnswer").disabled=true;item.a.forEach((answer,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=answer;b.setAttribute("aria-pressed","false");b.onclick=()=>{const selected=selectedAnswers.includes(i);if(selected){selectedAnswers=selectedAnswers.filter(n=>n!==i)}else{selectedAnswers.push(i)}b.style.borderColor=!selected?"#c22e58":"#eccbd5";b.style.background=!selected?"#fff0f5":"white";b.setAttribute("aria-pressed",!selected?"true":"false");$("continueAnswer").disabled=selectedAnswers.length===0};$("answers").appendChild(b)})}
+$("continueAnswer").onclick=()=>{if(selectedAnswers.length>0)indexAnswered(selectedAnswers.slice())};
 const loveNotes=[
   {text:"I love you d naayea",heart:"💖"},
   {text:"I love you d kuttima",heart:"💕"},
